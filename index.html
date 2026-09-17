@@ -7,8 +7,6 @@
 <title>10 anni insieme</title>
 <meta property="og:title" content="10 anni insieme ❤️">
 <meta property="og:description" content="24 ottobre 2026 · IYO Kaiseki">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://dedalusjinja.github.io/marco-noe/">
 <meta property="og:image" content="https://dedalusjinja.github.io/marco-noe/invito.png">
 <style>
 *{box-sizing:border-box}
@@ -21,15 +19,40 @@ body{overflow:hidden;background:#e7dccb;-webkit-tap-highlight-color:transparent}
 }
 .hint{position:absolute;top:calc(35px + env(safe-area-inset-top));left:0;right:0;text-align:center;
  font:600 11px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.28em;color:#76664f;
- transition:opacity .35s ease}
+ transition:opacity .3s ease}
 .envelope{
- position:relative;width:min(89vw,455px);aspect-ratio:1.45/1;transform-style:preserve-3d;cursor:pointer;
- filter:drop-shadow(0 22px 28px rgba(54,36,13,.16));will-change:opacity,transform
+ position:relative;width:min(89vw,455px);aspect-ratio:1.45/1;cursor:pointer;transform-style:preserve-3d;
+ filter:drop-shadow(0 22px 28px rgba(54,36,13,.16))
 }
-.back{position:absolute;inset:0;z-index:1;border-radius:11px;border:1px solid rgba(126,95,46,.18);
- background:#f7f0e5}
+.back{position:absolute;inset:0;z-index:1;border-radius:11px;background:#f7f0e5;border:1px solid rgba(126,95,46,.18)}
 
-/* Open flap triangle, behind the card */
+/*
+  KEY FIX:
+  This viewport is TWO envelopes tall and ends exactly at the envelope bottom.
+  It allows the invitation to travel UP beyond the envelope, but it can NEVER
+  become visible underneath it. No visibility toggles, no overflow release.
+*/
+.card-viewport{
+ position:absolute;z-index:3;
+ left:0;right:0;
+ bottom:0;
+ height:200%;
+ overflow:hidden;
+ pointer-events:none;
+}
+.card{
+ position:absolute;z-index:3;
+ width:68%;left:16%;
+ /* 100% = top edge of the actual envelope inside this 200%-high viewport */
+ top:128%;
+ aspect-ratio:.69/1;
+ border-radius:7px;overflow:hidden;background:#fffaf2;
+ box-shadow:0 10px 26px rgba(39,25,8,.18);
+ will-change:transform
+}
+.card img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Open flap triangle */
 .open-triangle{
  position:absolute;z-index:2;left:0;right:0;bottom:100%;height:60%;
  opacity:0;transform:scaleY(.04);transform-origin:50% 100%;
@@ -37,32 +60,111 @@ body{overflow:hidden;background:#e7dccb;-webkit-tap-highlight-color:transparent}
  background:linear-gradient(180deg,#e7d8c2,#faf3e8)
 }
 
-/* Card starts EXACTLY at the mouth of the envelope, not at the bottom. */
-.holder{position:absolute;inset:0;z-index:3;overflow:hidden;border-radius:11px;pointer-events:none}
-.holder.release{overflow:visible}
-.card{position:absolute;z-index:3;width:68%;left:16%;top:51%;aspect-ratio:.69/1;border-radius:7px;overflow:hidden;
- background:#fffaf2;box-shadow:0 10px 26px rgba(39,25,8,.18);visibility:hidden;will-change:transform}
-.card.ready{visibility:visible}
-.card img{display:block;width:100%;height:100%;object-fit:cover}
-
+/* Opaque front pocket always masks the card while it is still inside */
 .left,.right,.bottom{position:absolute;z-index:5;pointer-events:none}
-.left{inset:0 50% 0 0;background:linear-gradient(35deg,#e8dac5,#f7f0e5);
- clip-path:polygon(0 0,100% 51%,0 100%)}
-.right{inset:0 0 0 50%;background:linear-gradient(325deg,#e8dac5,#f7f0e5);
- clip-path:polygon(100% 0,0 51%,100% 100%)}
+.left{inset:0 50% 0 0;background:linear-gradient(35deg,#e8dac5,#f7f0e5);clip-path:polygon(0 0,100% 51%,0 100%)}
+.right{inset:0 0 0 50%;background:linear-gradient(325deg,#e8dac5,#f7f0e5);clip-path:polygon(100% 0,0 51%,100% 100%)}
 .bottom{left:0;right:0;bottom:0;height:59%;border-radius:0 0 11px 11px;
- background:linear-gradient(180deg,#f1e7d7,#e4d4bd);
- clip-path:polygon(0 100%,0 0,50% 52%,100% 0,100% 100%)}
+ background:linear-gradient(180deg,#f1e7d7,#e4d4bd);clip-path:polygon(0 100%,0 0,50% 52%,100% 0,100% 100%)}
 
-.flap{position:absolute;inset:0;z-index:7;transform-origin:50% 0;transform:rotateX(0);backface-visibility:hidden;
+.flap{position:absolute;inset:0;z-index:7;transform-origin:50% 0;backface-visibility:hidden;
  background:linear-gradient(180deg,#fbf6ed,#e6d8c3);clip-path:polygon(0 0,100% 0,50% 60%);will-change:transform}
-.seal{position:absolute;z-index:9;left:50%;top:45%;transform:translate(-50%,-50%) rotate(-2deg);width:75px;height:73px;
- border-radius:48% 52% 44% 56% / 55% 45% 55% 45%;display:grid;place-items:center;color:#e9c8aa;font:20px Georgia,serif;
+.seal{position:absolute;z-index:9;left:50%;top:45%;transform:translate(-50%,-50%) rotate(-2deg);
+ width:75px;height:73px;border-radius:48% 52% 44% 56% / 55% 45% 55% 45%;display:grid;place-items:center;
+ color:#e9c8aa;font:20px Georgia,serif;
  background:radial-gradient(circle at 31% 25%,rgba(255,255,255,.17),transparent 13%),
  linear-gradient(145deg,#a8312d,#731917 68%,#5f1111);
  box-shadow:0 8px 13px rgba(75,18,15,.25),inset 3px 4px 7px rgba(255,178,142,.10)}
-.seal:after{content:"永遠";width:48px;height:47px;border:1px solid rgba(236,201,169,.47);border-radius:50%;
- display:grid;place-items:center}
+.seal:after{content:"永遠";width:48px;height:47px;border:1px solid rgba(236,201,169,.47);border-radius:50%;display:grid;place-items:center}
+
+.card.takeover{position:fixed;z-index:50;margin:0;transform:none!important;
+ transition:left 1.12s cubic-bezier(.16,.78,.18,1),top 1.12s cubic-bezier(.16,.78,.18,1),
+ width 1.12s cubic-bezier(.16,.78,.18,1),height 1.12s cubic-bezier(.16,.78,.18,1),
+ box-shadow .9s ease}
+.close{position:fixed;z-index:70;top:calc(14px + env(safe-area-inset-top));right:14px;width:42px;height:42px;border:0;
+ border-radius:50%;background:rgba(255,255,255,.82);color:#51432f;font-size:25px;opacity:0;pointer-events:none;
+ box-shadow:0 5px 18px rgba(0,0,0,.09);transition:opacity .4s ease}
+.close.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<main class="scene">
+ <div class="hint" id="hint">TOCCA PER APRIRE</div>
+ <div class="envelope" id="envelope" role="button" tabindex="0">
+  <div class="back"></div>
+  <div class="open-triangle" id="triangle"></div>
+  <div class="card-viewport">
+   <div class="card" id="card"><img src="invito.png" alt="10 anni insieme"></div>
+  </div>
+  <div class="left"></div><div class="right"></div><div class="bottom"></div>
+  <div class="flap" id="flap"></div><div class="seal" id="seal"></div>
+ </div>
+ <button class="close" id="close">×</button>
+</main>
+<script>
+const envelope=document.getElementById('envelope'),card=document.getElementById('card'),
+flap=document.getElementById('flap'),triangle=document.getElementById('triangle'),
+seal=document.getElementById('seal'),hint=document.getElementById('hint'),
+closeBtn=document.getElementById('close');
+let busy=false;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const anim=(el,k,o)=>el.animate(k,{fill:'forwards',...o}).finished;
+
+async function openInvite(){
+ if(busy)return;busy=true;hint.style.opacity='0';
+
+ await anim(seal,[
+  {opacity:1,transform:'translate(-50%,-50%) rotate(-2deg) scale(1)'},
+  {opacity:0,transform:'translate(-50%,-46%) rotate(6deg) scale(.82)'}
+ ],{duration:300,easing:'ease-out'});
+
+ await Promise.all([
+  anim(flap,[{transform:'rotateX(0)'},{transform:'rotateX(90deg)',offset:.5},{transform:'rotateX(180deg)'}],
+   {duration:850,easing:'cubic-bezier(.22,.64,.2,1)'}),
+  anim(triangle,[{opacity:0,transform:'scaleY(.04)'},{opacity:1,transform:'scaleY(1)'}],
+   {duration:850,easing:'cubic-bezier(.22,.64,.2,1)'})
+ ]);
+
+ /* Continuous physical extraction. The card has existed inside the envelope
+    from frame zero; no visibility switch exists anywhere in the sequence. */
+ await anim(card,[
+  {transform:'translateY(0)'},
+  {transform:'translateY(-28%)',offset:.24},
+  {transform:'translateY(-73%)',offset:.55},
+  {transform:'translateY(-126%)',offset:.82},
+  {transform:'translateY(-155%)'}
+ ],{duration:1450,easing:'cubic-bezier(.18,.58,.14,1)'});
+
+ await wait(380);
+
+ /* Same card is detached while visually stationary. */
+ const r=card.getBoundingClientRect();
+ card.getAnimations().forEach(a=>a.cancel());
+ document.body.appendChild(card);
+ card.classList.add('takeover');
+ Object.assign(card.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});
+ card.getBoundingClientRect();
+
+ /* Entire envelope, triangle included, leaves as one object. */
+ await anim(envelope,[{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.985)'}],
+  {duration:500,easing:'ease-in-out'});
+ envelope.style.display='none';
+ await wait(140);
+
+ const ratio=r.width/r.height,maxH=innerHeight*.92,maxW=innerWidth*.94;
+ let h=maxH,w=h*ratio;if(w>maxW){w=maxW;h=w/ratio}
+ requestAnimationFrame(()=>Object.assign(card.style,{
+  left:(innerWidth-w)/2+'px',top:(innerHeight-h)/2+'px',width:w+'px',height:h+'px',
+  boxShadow:'0 30px 75px rgba(45,29,9,.25)'
+ }));
+ await wait(1180);closeBtn.classList.add('show');
+}
+envelope.addEventListener('click',openInvite);
+envelope.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openInvite()}});
+closeBtn.addEventListener('click',()=>location.reload());
+</script>
+</body>
+</html> display:grid;place-items:center}
 
 .card.takeover{position:fixed;z-index:50;margin:0;transform:none!important;visibility:visible;
  transition:left 1.15s cubic-bezier(.16,.78,.18,1),top 1.15s cubic-bezier(.16,.78,.18,1),
