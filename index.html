@@ -112,6 +112,106 @@ async function openInvite(){
  ]);
 
  /* The card appears already at the mouth: it no longer travels up from the bottom. */
+ holder.classList.add('release');
+
+ /* Start extraction while still hidden. Reveal only after the card has already
+    moved a few pixels, so there is no single stationary frame / flash. */
+ const extraction = card.animate([
+   {transform:'translateY(0)'},
+   {transform:'translateY(-8%)',offset:.08},
+   {transform:'translateY(-42%)',offset:.38},
+   {transform:'translateY(-92%)',offset:.76},
+   {transform:'translateY(-112%)'}
+ ],{
+   duration:1250,
+   easing:'cubic-bezier(.18,.58,.14,1)',
+   fill:'forwards'
+ });
+
+ requestAnimationFrame(()=>{
+   requestAnimationFrame(()=>card.classList.add('ready'));
+ });
+
+ await extraction.finished;
+
+ await wait(380);
+
+ /* Detach the card FIRST. Then fade the WHOLE envelope as one object.
+    This guarantees the high triangle cannot remain behind. */
+ const r=card.getBoundingClientRect();
+ card.getAnimations().forEach(a=>a.cancel());
+ document.body.appendChild(card);
+ card.classList.add('takeover');
+ Object.assign(card.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});
+ card.getBoundingClientRect();
+
+ await anim(envelope,[{opacity:1},{opacity:0}],{duration:480,easing:'ease-in-out'});
+ envelope.style.visibility='hidden';
+ await wait(180);
+
+ const ratio=r.width/r.height,maxH=innerHeight*.92,maxW=innerWidth*.94;
+ let h=maxH,w=h*ratio;if(w>maxW){w=maxW;h=w/ratio}
+ requestAnimationFrame(()=>Object.assign(card.style,{
+  left:(innerWidth-w)/2+'px',top:(innerHeight-h)/2+'px',width:w+'px',height:h+'px',
+  boxShadow:'0 30px 75px rgba(45,29,9,.25)'
+ }));
+ await wait(1200);closeBtn.classList.add('show');
+}
+envelope.addEventListener('click',openInvite);
+envelope.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openInvite()}});
+closeBtn.addEventListener('click',()=>location.reload());
+</script>
+</body>
+</html> display:grid;place-items:center}
+
+.card.takeover{position:fixed;z-index:50;margin:0;transform:none!important;visibility:visible;
+ transition:left 1.15s cubic-bezier(.16,.78,.18,1),top 1.15s cubic-bezier(.16,.78,.18,1),
+ width 1.15s cubic-bezier(.16,.78,.18,1),height 1.15s cubic-bezier(.16,.78,.18,1),
+ border-radius .8s ease,box-shadow .9s ease}
+.close{position:fixed;z-index:70;top:calc(14px + env(safe-area-inset-top));right:14px;width:42px;height:42px;border:0;
+ border-radius:50%;background:rgba(255,255,255,.82);color:#51432f;font-size:25px;box-shadow:0 5px 18px rgba(0,0,0,.09);
+ opacity:0;pointer-events:none;transition:opacity .4s ease}
+.close.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<main class="scene">
+ <div class="hint" id="hint">TOCCA PER APRIRE</div>
+ <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Apri l'invito">
+  <div class="back"></div>
+  <div class="open-triangle" id="triangle"></div>
+  <div class="holder" id="holder"><div class="card" id="card">
+   <img src="invito.png" alt="10 anni insieme — 24 ottobre 2026, ore 19:00, IYO Kaiseki">
+  </div></div>
+  <div class="left"></div><div class="right"></div><div class="bottom"></div>
+  <div class="flap" id="flap"></div><div class="seal" id="seal"></div>
+ </div>
+ <button class="close" id="close" aria-label="Chiudi">×</button>
+</main>
+<script>
+const envelope=document.getElementById('envelope'),holder=document.getElementById('holder'),
+card=document.getElementById('card'),flap=document.getElementById('flap'),
+triangle=document.getElementById('triangle'),seal=document.getElementById('seal'),
+hint=document.getElementById('hint'),closeBtn=document.getElementById('close');
+let busy=false;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const anim=(el,k,o)=>el.animate(k,{fill:'forwards',...o}).finished;
+
+async function openInvite(){
+ if(busy)return; busy=true; hint.style.opacity='0';
+
+ await anim(seal,[{opacity:1,transform:'translate(-50%,-50%) rotate(-2deg) scale(1)'},
+ {opacity:0,transform:'translate(-50%,-46%) rotate(6deg) scale(.82)'}],
+ {duration:300,easing:'ease-out'});
+
+ await Promise.all([
+  anim(flap,[{transform:'rotateX(0)'},{transform:'rotateX(90deg)',offset:.5},{transform:'rotateX(180deg)'}],
+   {duration:850,easing:'cubic-bezier(.22,.64,.2,1)'}),
+  anim(triangle,[{opacity:0,transform:'scaleY(.04)'},{opacity:1,transform:'scaleY(1)'}],
+   {duration:850,easing:'cubic-bezier(.22,.64,.2,1)'})
+ ]);
+
+ /* The card appears already at the mouth: it no longer travels up from the bottom. */
  card.classList.add('ready');
  holder.classList.add('release');
  await wait(80);
