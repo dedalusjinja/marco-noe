@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#eee5d8">
 <title>10 anni insieme</title>
-
 <meta property="og:title" content="10 anni insieme ❤️">
 <meta property="og:description" content="24 ottobre 2026 · IYO Kaiseki">
 <meta property="og:type" content="website">
@@ -13,56 +12,225 @@
 <meta property="og:image" content="https://dedalusjinja.github.io/marco-noe/invito.png">
 
 <style>
-:root{
-  --paper:#f7f0e5;
-  --paper-shadow:#e5d5bd;
-  --ink:#6f604a;
-}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{
-  overflow:hidden;
-  background:#e7dccb;
-  -webkit-tap-highlight-color:transparent;
-}
+body{overflow:hidden;background:#e7dccb;-webkit-tap-highlight-color:transparent}
 .scene{
-  position:relative;
-  width:100%;
-  height:100dvh;
-  overflow:hidden;
-  display:grid;
-  place-items:center;
-  perspective:1800px;
-  background:
-    radial-gradient(circle at 50% 15%,rgba(255,255,255,.90),transparent 34%),
-    linear-gradient(180deg,#efe7db,#dfd1bd);
-  transition:background 1.3s ease;
+ position:relative;width:100%;height:100dvh;overflow:hidden;
+ display:grid;place-items:center;perspective:1800px;
+ background:radial-gradient(circle at 50% 15%,rgba(255,255,255,.92),transparent 34%),
+ linear-gradient(180deg,#efe7db,#dfd1bd)
 }
-/* very subtle Japanese foliage shadow in the final phase */
-.scene:before{
-  content:"";
-  position:absolute;
-  inset:-8%;
-  pointer-events:none;
-  opacity:0;
-  background:
-    radial-gradient(ellipse at 8% 38%,rgba(84,70,48,.07) 0 2%,transparent 2.4%),
-    radial-gradient(ellipse at 14% 32%,rgba(84,70,48,.055) 0 2.3%,transparent 2.7%),
-    radial-gradient(ellipse at 91% 70%,rgba(84,70,48,.05) 0 2.5%,transparent 2.9%);
-  filter:blur(1px);
-  transform:scale(1.1);
-  transition:opacity 1.2s ease;
-}
-.scene.ending:before{opacity:1}
-
 .hint{
-  position:absolute;
-  top:calc(35px + env(safe-area-inset-top));
-  left:0;right:0;
-  text-align:center;
-  font:600 11px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  letter-spacing:.28em;
-  color:#76664f;
+ position:absolute;top:calc(35px + env(safe-area-inset-top));left:0;right:0;
+ text-align:center;font:600 11px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ letter-spacing:.28em;color:#76664f;transition:opacity .4s ease
+}
+.envelope{
+ position:relative;width:min(89vw,455px);aspect-ratio:1.45/1;
+ transform-style:preserve-3d;cursor:pointer;
+ filter:drop-shadow(0 22px 28px rgba(54,36,13,.16))
+}
+.papertexture{
+ background-image:repeating-linear-gradient(3deg,rgba(110,85,52,.017) 0 1px,transparent 1px 4px)
+}
+.back{
+ position:absolute;inset:0;z-index:1;border-radius:11px;
+ border:1px solid rgba(126,95,46,.18);
+ background-color:#f7f0e5
+}
+
+/* OPEN FLAP BACKSIDE: this is the triangle that remains visible after opening */
+.flap-back{
+ position:absolute;
+ z-index:2;
+ left:0;right:0;
+ top:-59%;
+ height:60%;
+ opacity:0;
+ transform-origin:50% 100%;
+ transform:scaleY(.05);
+ clip-path:polygon(0 100%,50% 0,100% 100%);
+ background:
+   repeating-linear-gradient(3deg,rgba(110,85,52,.018) 0 1px,transparent 1px 4px),
+   linear-gradient(180deg,#e7d8c2,#faf3e8);
+ border-bottom:1px solid rgba(126,95,46,.12);
+}
+
+/* CARD:
+   At rest it starts at 74%, below the central V of the pocket.
+   Therefore ZERO invitation pixels are visible when the envelope is closed. */
+.holder{
+ position:absolute;inset:0;z-index:3;overflow:hidden;border-radius:11px;pointer-events:none
+}
+.holder.release{overflow:visible}
+.card{
+ position:absolute;z-index:3;width:68%;left:16%;top:74%;
+ aspect-ratio:.69/1;overflow:hidden;border-radius:7px;background:#fffaf2;
+ box-shadow:0 10px 26px rgba(39,25,8,.18);will-change:transform
+}
+.card img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* FRONT POCKET: opaque and always above card while extracting */
+.left,.right,.bottom{position:absolute;z-index:5;pointer-events:none}
+.left{
+ inset:0 50% 0 0;
+ background:linear-gradient(35deg,#e8dac5,#f7f0e5);
+ clip-path:polygon(0 0,100% 51%,0 100%)
+}
+.right{
+ inset:0 0 0 50%;
+ background:linear-gradient(325deg,#e8dac5,#f7f0e5);
+ clip-path:polygon(100% 0,0 51%,100% 100%)
+}
+.bottom{
+ left:0;right:0;bottom:0;height:59%;border-radius:0 0 11px 11px;
+ background:linear-gradient(180deg,#f1e7d7,#e4d4bd);
+ clip-path:polygon(0 100%,0 0,50% 52%,100% 0,100% 100%)
+}
+
+/* CLOSED FLAP */
+.flap{
+ position:absolute;inset:0;z-index:7;transform-origin:50% 0;
+ transform:rotateX(0deg);backface-visibility:hidden;
+ background:linear-gradient(180deg,#fbf6ed,#e6d8c3);
+ clip-path:polygon(0 0,100% 0,50% 60%);will-change:transform
+}
+.seal{
+ position:absolute;z-index:9;left:50%;top:45%;
+ transform:translate(-50%,-50%) rotate(-2deg);width:75px;height:73px;
+ border-radius:48% 52% 44% 56% / 55% 45% 55% 45%;
+ display:grid;place-items:center;color:#e9c8aa;font:20px Georgia,serif;
+ background:radial-gradient(circle at 31% 25%,rgba(255,255,255,.17),transparent 13%),
+ radial-gradient(circle at 67% 72%,rgba(52,5,5,.22),transparent 28%),
+ linear-gradient(145deg,#a8312d,#731917 68%,#5f1111);
+ box-shadow:0 8px 13px rgba(75,18,15,.25),inset 3px 4px 7px rgba(255,178,142,.10),
+ inset -3px -4px 8px rgba(55,4,4,.22)
+}
+.seal:after{
+ content:"永遠";width:48px;height:47px;border:1px solid rgba(236,201,169,.47);
+ border-radius:50%;display:grid;place-items:center
+}
+.paper{transition:opacity .5s ease,filter .5s ease}
+.envelope.fade .paper,.envelope.fade .flap-back{opacity:0!important;filter:blur(1.5px)}
+
+.card.takeover{
+ position:fixed;z-index:50;margin:0;transform:none!important;
+ transition:left 1.15s cubic-bezier(.16,.78,.18,1),top 1.15s cubic-bezier(.16,.78,.18,1),
+ width 1.15s cubic-bezier(.16,.78,.18,1),height 1.15s cubic-bezier(.16,.78,.18,1),
+ border-radius .8s ease,box-shadow .9s ease
+}
+.close{
+ position:fixed;z-index:70;top:calc(14px + env(safe-area-inset-top));right:14px;
+ width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.82);
+ color:#51432f;font-size:25px;box-shadow:0 5px 18px rgba(0,0,0,.09);
+ opacity:0;pointer-events:none;transition:opacity .4s ease
+}
+.close.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<main class="scene">
+ <div class="hint" id="hint">TOCCA PER APRIRE</div>
+ <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Apri l'invito">
+   <div class="back paper papertexture"></div>
+   <div class="flap-back paper" id="flapBack"></div>
+
+   <div class="holder" id="holder">
+     <div class="card" id="card">
+       <img src="invito.png" alt="10 anni insieme — 24 ottobre 2026, ore 19:00, IYO Kaiseki">
+     </div>
+   </div>
+
+   <div class="left paper papertexture"></div>
+   <div class="right paper papertexture"></div>
+   <div class="bottom paper papertexture"></div>
+   <div class="flap paper papertexture" id="flap"></div>
+   <div class="seal paper" id="seal"></div>
+ </div>
+ <button class="close" id="close" aria-label="Chiudi">×</button>
+</main>
+
+<script>
+const envelope=document.getElementById('envelope');
+const holder=document.getElementById('holder');
+const card=document.getElementById('card');
+const flap=document.getElementById('flap');
+const flapBack=document.getElementById('flapBack');
+const seal=document.getElementById('seal');
+const hint=document.getElementById('hint');
+const closeBtn=document.getElementById('close');
+let busy=false;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const anim=(el,k,o)=>el.animate(k,{fill:'forwards',...o}).finished;
+
+async function openInvite(){
+ if(busy)return; busy=true; hint.style.opacity='0';
+
+ await anim(seal,[
+  {opacity:1,transform:'translate(-50%,-50%) rotate(-2deg) scale(1)'},
+  {opacity:0,transform:'translate(-50%,-45%) rotate(6deg) scale(.82)'}
+ ],{duration:330,easing:'ease-out'});
+
+ /* Closed flap rotates away while its inner triangular face grows upward behind the card */
+ const a1=anim(flap,[
+  {transform:'rotateX(0deg)'},{transform:'rotateX(90deg)',offset:.48},
+  {transform:'rotateX(180deg)'}
+ ],{duration:900,easing:'cubic-bezier(.22,.64,.2,1)'});
+
+ const a2=anim(flapBack,[
+  {opacity:0,transform:'scaleY(.05)'},
+  {opacity:.15,transform:'scaleY(.15)',offset:.25},
+  {opacity:1,transform:'scaleY(1)'}
+ ],{duration:900,easing:'cubic-bezier(.22,.64,.2,1)'});
+
+ await Promise.all([a1,a2]);
+
+ holder.classList.add('release');
+
+ /* Longer travel because card was deliberately hidden deeper */
+ await anim(card,[
+  {transform:'translateY(0)'},
+  {transform:'translateY(-45%)',offset:.32},
+  {transform:'translateY(-112%)',offset:.72},
+  {transform:'translateY(-145%)'}
+ ],{duration:1380,easing:'cubic-bezier(.18,.58,.14,1)'});
+
+ await wait(420);
+
+ /* Envelope, including open triangle, disappears only after card is clear */
+ envelope.classList.add('fade');
+ await wait(540);
+
+ const r=card.getBoundingClientRect();
+ card.getAnimations().forEach(a=>a.cancel());
+ document.body.appendChild(card);
+ card.classList.add('takeover');
+ Object.assign(card.style,{
+  left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'
+ });
+ card.getBoundingClientRect();
+
+ const ratio=r.width/r.height;
+ const maxH=innerHeight*.92,maxW=innerWidth*.94;
+ let h=maxH,w=h*ratio;
+ if(w>maxW){w=maxW;h=w/ratio}
+ requestAnimationFrame(()=>Object.assign(card.style,{
+  left:(innerWidth-w)/2+'px',top:(innerHeight-h)/2+'px',
+  width:w+'px',height:h+'px',
+  boxShadow:'0 30px 75px rgba(45,29,9,.25)'
+ }));
+ await wait(1200);
+ closeBtn.classList.add('show');
+}
+envelope.addEventListener('click',openInvite);
+envelope.addEventListener('keydown',e=>{
+ if(e.key==='Enter'||e.key===' '){e.preventDefault();openInvite()}
+});
+closeBtn.addEventListener('click',()=>location.reload());
+</script>
+</body>
+</html>  color:#76664f;
   transition:opacity .45s ease;
 }
 .envelope{
