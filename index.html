@@ -14,341 +14,273 @@
 
 <style>
 :root{
-  --paper:#f5eee2;
-  --paper2:#eadcc7;
-  --line:rgba(135,101,48,.20);
-  --wax1:#aa332f;
-  --wax2:#741817;
+ --cream:#f6efe4;
+ --cream2:#e8dac5;
+ --wax:#8d211e;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 15%,rgba(255,255,255,.92),transparent 32%),
-    linear-gradient(180deg,#eee5d8,#ded0bd);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  -webkit-tap-highlight-color:transparent;
+ overflow:hidden;
+ background:
+   radial-gradient(circle at 50% 18%,rgba(255,255,255,.9),transparent 31%),
+   linear-gradient(180deg,#eee5d8,#ded0bd);
+ -webkit-tap-highlight-color:transparent;
 }
-.stage{
-  position:relative;
-  height:100dvh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  perspective:1600px;
+.scene{
+ height:100dvh;
+ position:relative;
+ overflow:hidden;
+ display:grid;
+ place-items:center;
+ perspective:1600px;
 }
 .hint{
-  position:absolute;
-  top:calc(34px + env(safe-area-inset-top));
-  left:0;right:0;
-  text-align:center;
-  font-size:12px;
-  font-weight:600;
-  letter-spacing:.25em;
-  color:#75664f;
-  transition:opacity .4s ease;
+ position:absolute;
+ top:calc(38px + env(safe-area-inset-top));
+ width:100%;
+ text-align:center;
+ font:600 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ letter-spacing:.24em;
+ color:#74654e;
+ transition:opacity .45s ease;
 }
-.wrap{
-  position:relative;
-  width:min(90vw,460px);
-  aspect-ratio:1.45/1;
-  cursor:pointer;
-  transform-style:preserve-3d;
-  filter:drop-shadow(0 22px 30px rgba(48,33,13,.18));
-}
-.env{
-  position:absolute;
-  inset:0;
-  border-radius:10px;
-  transform-style:preserve-3d;
+.unit{
+ position:relative;
+ width:min(90vw,460px);
+ aspect-ratio:1.45/1;
+ cursor:pointer;
+ transform-style:preserve-3d;
 }
 
-/* back of envelope */
+/* Card is the SAME DOM element from envelope to final state */
+.card{
+ position:absolute;
+ z-index:2;
+ width:72%;
+ left:14%;
+ top:16%;
+ aspect-ratio:.69/1;
+ border-radius:7px;
+ overflow:hidden;
+ background:#fffaf2;
+ box-shadow:0 10px 25px rgba(40,27,9,.17);
+ transform:translateY(46%) scale(.91);
+ transform-origin:center center;
+ transition:
+   transform 1.2s cubic-bezier(.18,.78,.18,1) .78s,
+   width 1.05s cubic-bezier(.2,.8,.2,1) 2.05s,
+   left 1.05s cubic-bezier(.2,.8,.2,1) 2.05s,
+   top 1.05s cubic-bezier(.2,.8,.2,1) 2.05s,
+   box-shadow .8s ease 2.05s;
+}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Envelope rear */
 .back{
-  position:absolute;
-  inset:0;
-  border-radius:10px;
-  background:var(--paper);
-  border:1px solid var(--line);
-  z-index:1;
+ position:absolute;inset:0;
+ z-index:1;
+ border-radius:11px;
+ background:var(--cream);
+ border:1px solid rgba(130,98,48,.22);
+ box-shadow:0 24px 34px rgba(48,33,13,.18);
+ transition:opacity .72s ease 1.9s,transform .9s ease 1.9s;
+}
+
+/* Envelope front pocket */
+.left,.right,.bottom{
+ position:absolute;
+ z-index:4;
+ pointer-events:none;
+ transition:opacity .72s ease 1.9s,transform .9s ease 1.9s;
+}
+.left{
+ inset:0 50% 0 0;
+ background:linear-gradient(35deg,#e8dac5,#f6efe4);
+ clip-path:polygon(0 0,100% 51%,0 100%);
+}
+.right{
+ inset:0 0 0 50%;
+ background:linear-gradient(325deg,#e8dac5,#f6efe4);
+ clip-path:polygon(100% 0,0 51%,100% 100%);
+}
+.bottom{
+ left:0;right:0;bottom:0;height:57%;
+ border-radius:0 0 11px 11px;
+ background:linear-gradient(#efe4d2,#e4d4bc);
+ clip-path:polygon(0 100%,0 0,50% 51%,100% 0,100% 100%);
+}
+
+/* Flap */
+.flap{
+ position:absolute;inset:0;
+ z-index:6;
+ background:linear-gradient(#faf4eb,#e6d8c3);
+ clip-path:polygon(0 0,100% 0,50% 60%);
+ transform-origin:50% 0;
+ transform:rotateX(0);
+ backface-visibility:hidden;
+ transition:transform .95s cubic-bezier(.18,.72,.18,1),
+            opacity .55s ease 1.9s;
+}
+.seal{
+ position:absolute;
+ z-index:8;
+ left:50%;top:45%;
+ width:74px;height:74px;
+ transform:translate(-50%,-50%);
+ border-radius:50%;
+ background:
+   radial-gradient(circle at 34% 27%,rgba(255,255,255,.14),transparent 16%),
+   linear-gradient(145deg,#aa3732,#701615);
+ box-shadow:0 7px 14px rgba(75,18,15,.28),inset 0 0 0 2px rgba(255,220,180,.18);
+ color:#efd4b5;
+ display:grid;place-items:center;
+ font:20px Georgia,serif;
+ transition:opacity .35s ease .15s,transform .45s ease;
+}
+.seal:after{
+ content:"永遠";
+ width:48px;height:48px;
+ border:1px solid rgba(239,212,181,.52);
+ border-radius:50%;
+ display:grid;place-items:center;
+}
+
+/* OPEN */
+.scene.open .hint{opacity:0}
+.scene.open .flap{transform:rotateX(180deg)}
+.scene.open .seal{
+ opacity:0;
+ transform:translate(-50%,-50%) scale(.78);
+}
+
+/* only rises around one third */
+.scene.open .card{
+ transform:translateY(-36%) scale(.96);
 }
 
 /*
-  IMPORTANT:
-  the card is fully below the visible opening while closed.
-  It is also clipped by the envelope until the flap is open.
+ Seamless morph:
+ envelope fades behind it, while THIS SAME CARD expands to final size.
 */
-.card-clip{
-  position:absolute;
-  inset:0;
-  overflow:hidden;
-  border-radius:10px;
-  z-index:2;
-  pointer-events:none;
+.scene.final .back,
+.scene.final .left,
+.scene.final .right,
+.scene.final .bottom,
+.scene.final .flap{
+ opacity:0;
+ transform:scale(.96);
+ pointer-events:none;
 }
-.card{
-  position:absolute;
-  width:72%;
-  left:14%;
-  top:58%;
-  aspect-ratio:.69/1;
-  border-radius:6px;
-  overflow:hidden;
-  background:#fffaf2;
-  box-shadow:0 12px 25px rgba(35,23,7,.18);
-  transform:translateY(15%);
-  transition:
-    top 1.45s cubic-bezier(.18,.76,.18,1) 1.00s,
-    transform 1.45s cubic-bezier(.18,.76,.18,1) 1.00s;
-}
-.card img{
-  display:block;
-  width:100%;
-  height:100%;
-  object-fit:cover;
+.scene.final .card{
+ position:fixed;
+ z-index:20;
+ width:auto;
+ left:50%;
+ top:50%;
+ height:min(92dvh,980px);
+ max-width:94vw;
+ aspect-ratio:.69/1;
+ transform:translate(-50%,-50%) scale(1);
+ box-shadow:0 28px 70px rgba(45,29,9,.28);
 }
 
-/* front pocket */
-.left,.right,.bottom{
-  position:absolute;
-  z-index:4;
-  pointer-events:none;
+/* subtle background change only, no viewer swap */
+.scene:after{
+ content:"";
+ position:absolute;inset:0;
+ z-index:-1;
+ opacity:0;
+ background:
+   radial-gradient(circle at 50% 22%,rgba(255,255,255,.75),transparent 32%),
+   rgba(237,228,214,.5);
+ transition:opacity .8s ease 2s;
 }
-.left{
-  inset:0 50% 0 0;
-  background:linear-gradient(35deg,#e8dac5,#f5eee2);
-  clip-path:polygon(0 0,100% 52%,0 100%);
-}
-.right{
-  inset:0 0 0 50%;
-  background:linear-gradient(325deg,#e8dac5,#f5eee2);
-  clip-path:polygon(100% 0,0 52%,100% 100%);
-}
-.bottom{
-  left:0;right:0;bottom:0;height:57%;
-  background:linear-gradient(180deg,#f0e5d4,#e6d7c0);
-  clip-path:polygon(0 100%,0 0,50% 51%,100% 0,100% 100%);
-  border-radius:0 0 10px 10px;
-}
+.scene.final:after{opacity:1}
 
-/* closing flap */
-.flap{
-  position:absolute;
-  inset:0;
-  z-index:6;
-  background:linear-gradient(180deg,#faf4eb,#e6d8c3);
-  clip-path:polygon(0 0,100% 0,50% 60%);
-  transform-origin:50% 0;
-  transform:rotateX(0deg);
-  transition:transform .9s cubic-bezier(.2,.72,.18,1);
-  backface-visibility:hidden;
-}
-
-/* wax seal */
-.seal{
-  position:absolute;
-  z-index:8;
-  left:50%;
-  top:45%;
-  transform:translate(-50%,-50%);
-  width:74px;height:74px;
-  border-radius:48% 52% 45% 55% / 52% 46% 54% 48%;
-  background:
-    radial-gradient(circle at 34% 27%,rgba(255,255,255,.16),transparent 16%),
-    linear-gradient(145deg,var(--wax1),var(--wax2));
-  box-shadow:
-    0 8px 14px rgba(80,20,15,.28),
-    inset 0 0 0 2px rgba(255,218,177,.18);
-  color:#ead0b3;
-  display:grid;
-  place-items:center;
-  font-family:Georgia,serif;
-  transition:opacity .3s ease .15s,transform .4s ease;
-}
-.seal span{
-  width:48px;height:48px;
-  border:1px solid rgba(239,207,172,.55);
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  font-size:20px;
-}
-
-/* OPENING SEQUENCE */
-.stage.open .hint{opacity:0}
-.stage.open .flap{transform:rotateX(180deg)}
-.stage.open .seal{
-  opacity:0;
-  transform:translate(-50%,-50%) scale(.75) rotate(8deg);
-}
-
-/* first reveal: card rises, but envelope stays physically in front */
-.stage.open .card{
-  top:-63%;
-  transform:translateY(0);
-}
-
-/* Once it has risen, remove clipping and let it float free */
-.stage.release .card-clip{
-  overflow:visible;
-}
-
-/* Envelope leaves DOWNWARD, never remains halfway over the card */
-.stage.release .left,
-.stage.release .right,
-.stage.release .bottom,
-.stage.release .back,
-.stage.release .flap{
-  transform:translateY(115%);
-  opacity:0;
-  transition:transform .75s cubic-bezier(.4,0,.3,1),opacity .5s ease;
-}
-.stage.release .card{
-  transition:transform .8s cubic-bezier(.2,.8,.2,1);
-  transform:translateY(8%) scale(1.04);
-}
-
-/* final full screen */
-.viewer{
-  position:fixed;
-  inset:0;
-  z-index:30;
-  display:grid;
-  place-items:center;
-  padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));
-  background:
-    radial-gradient(circle at 50% 20%,rgba(255,255,255,.82),transparent 32%),
-    rgba(235,225,210,.97);
-  backdrop-filter:blur(10px);
-  opacity:0;
-  visibility:hidden;
-  transition:opacity .65s ease,visibility .65s ease;
-}
-.viewer.show{
-  opacity:1;
-  visibility:visible;
-}
-.final{
-  height:min(93dvh,980px);
-  max-width:94vw;
-  aspect-ratio:.69/1;
-  border-radius:8px;
-  overflow:hidden;
-  background:#fff;
-  box-shadow:0 26px 70px rgba(45,29,9,.27);
-  transform:translateY(18px) scale(.985);
-  transition:transform .8s cubic-bezier(.2,.8,.2,1);
-}
-.viewer.show .final{transform:none}
-.final img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
 .close{
-  position:fixed;
-  top:calc(14px + env(safe-area-inset-top));
-  right:14px;
-  width:42px;height:42px;
-  border:0;
-  border-radius:50%;
-  background:rgba(255,255,255,.8);
-  color:#51432f;
-  font-size:25px;
-  box-shadow:0 5px 18px rgba(0,0,0,.10);
+ position:fixed;
+ z-index:40;
+ top:calc(14px + env(safe-area-inset-top));
+ right:14px;
+ width:42px;height:42px;
+ border:0;border-radius:50%;
+ background:rgba(255,255,255,.82);
+ color:#51432f;
+ font-size:25px;
+ box-shadow:0 5px 18px rgba(0,0,0,.10);
+ opacity:0;
+ pointer-events:none;
+ transition:opacity .4s ease;
+}
+.scene.final .close{
+ opacity:1;
+ pointer-events:auto;
 }
 @media (prefers-reduced-motion:reduce){
-  *{transition-duration:.01ms!important}
+ *{transition-duration:.01ms!important}
 }
 </style>
 </head>
 
 <body>
-<main class="stage" id="stage">
-  <div class="hint">TOCCA PER APRIRE</div>
+<main class="scene" id="scene">
+ <div class="hint">TOCCA PER APRIRE</div>
 
-  <div class="wrap" id="envelope" role="button" tabindex="0" aria-label="Apri l'invito">
-    <div class="env">
-      <div class="back"></div>
+ <div class="unit" id="unit" role="button" tabindex="0" aria-label="Apri l'invito">
+   <div class="back"></div>
 
-      <div class="card-clip">
-        <div class="card">
-          <img src="invito.png" alt="">
-        </div>
-      </div>
+   <div class="card">
+     <img src="invito.png" alt="10 anni insieme — 24 ottobre 2026, ore 19:00, IYO Kaiseki">
+   </div>
 
-      <div class="left"></div>
-      <div class="right"></div>
-      <div class="bottom"></div>
-      <div class="flap"></div>
+   <div class="left"></div>
+   <div class="right"></div>
+   <div class="bottom"></div>
+   <div class="flap"></div>
+   <div class="seal"></div>
+ </div>
 
-      <div class="seal"><span>永遠</span></div>
-    </div>
-  </div>
+ <button class="close" id="close" aria-label="Chiudi">×</button>
 </main>
 
-<section class="viewer" id="viewer" aria-hidden="true">
-  <button class="close" id="close" aria-label="Chiudi">×</button>
-  <div class="final">
-    <img src="invito.png" alt="10 anni insieme — 24 ottobre 2026, ore 19:00, IYO Kaiseki">
-  </div>
-</section>
-
 <script>
-const stage = document.getElementById('stage');
-const envelope = document.getElementById('envelope');
-const viewer = document.getElementById('viewer');
-const closeBtn = document.getElementById('close');
-
+const scene=document.getElementById('scene');
+const unit=document.getElementById('unit');
+const close=document.getElementById('close');
 let opened=false;
-let timers=[];
-
-function later(fn,ms){
-  const t=setTimeout(fn,ms);
-  timers.push(t);
-}
+let timer;
 
 function openInvite(){
-  if(opened)return;
-  opened=true;
+ if(opened)return;
+ opened=true;
+ scene.classList.add('open');
 
-  // 1. Open flap
-  stage.classList.add('open');
-
-  // 2. Card finishes sliding out
-  // 3. Then envelope moves completely away downward
-  later(()=>stage.classList.add('release'),2350);
-
-  // 4. Final card takes over screen
-  later(()=>{
-    viewer.classList.add('show');
-    viewer.setAttribute('aria-hidden','false');
-  },3050);
+ // Same card morphs into the final invitation.
+ timer=setTimeout(()=>scene.classList.add('final'),2050);
 }
 
-function resetInvite(){
-  timers.forEach(clearTimeout);
-  timers=[];
-  viewer.classList.remove('show');
-  viewer.setAttribute('aria-hidden','true');
-
-  setTimeout(()=>{
-    stage.classList.remove('release');
-    stage.classList.remove('open');
-    opened=false;
-  },450);
+function reset(){
+ clearTimeout(timer);
+ scene.classList.remove('final');
+ setTimeout(()=>{
+   scene.classList.remove('open');
+   opened=false;
+ },500);
 }
 
-envelope.addEventListener('click',openInvite);
-envelope.addEventListener('keydown',e=>{
-  if(e.key==='Enter'||e.key===' '){
-    e.preventDefault();
-    openInvite();
-  }
+unit.addEventListener('click',openInvite);
+unit.addEventListener('keydown',e=>{
+ if(e.key==='Enter'||e.key===' '){
+   e.preventDefault();
+   openInvite();
+ }
 });
-closeBtn.addEventListener('click',resetInvite);
+close.addEventListener('click',e=>{
+ e.stopPropagation();
+ reset();
+});
 </script>
 </body>
 </html>
