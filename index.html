@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#eee4d5">
+<meta name="theme-color" content="#eee5d8">
 <title>10 anni insieme</title>
 
 <meta property="og:title" content="10 anni insieme ❤️">
@@ -15,17 +15,14 @@
 <style>
 :root{
   --paper:#f7f0e5;
-  --paper2:#e9dcc8;
-  --wax1:#ad3934;
-  --wax2:#721716;
+  --paper-shadow:#e5d5bd;
+  --ink:#6f604a;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{
   overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 18%,rgba(255,255,255,.94),transparent 32%),
-    linear-gradient(180deg,#eee5d8 0%,#dfd1be 100%);
+  background:#e7dccb;
   -webkit-tap-highlight-color:transparent;
 }
 .scene{
@@ -36,33 +33,326 @@ body{
   display:grid;
   place-items:center;
   perspective:1800px;
+  background:
+    radial-gradient(circle at 50% 15%,rgba(255,255,255,.90),transparent 34%),
+    linear-gradient(180deg,#efe7db,#dfd1bd);
+  transition:background 1.3s ease;
 }
+/* very subtle Japanese foliage shadow in the final phase */
+.scene:before{
+  content:"";
+  position:absolute;
+  inset:-8%;
+  pointer-events:none;
+  opacity:0;
+  background:
+    radial-gradient(ellipse at 8% 38%,rgba(84,70,48,.07) 0 2%,transparent 2.4%),
+    radial-gradient(ellipse at 14% 32%,rgba(84,70,48,.055) 0 2.3%,transparent 2.7%),
+    radial-gradient(ellipse at 91% 70%,rgba(84,70,48,.05) 0 2.5%,transparent 2.9%);
+  filter:blur(1px);
+  transform:scale(1.1);
+  transition:opacity 1.2s ease;
+}
+.scene.ending:before{opacity:1}
+
 .hint{
   position:absolute;
-  top:calc(34px + env(safe-area-inset-top));
+  top:calc(35px + env(safe-area-inset-top));
   left:0;right:0;
   text-align:center;
-  font:600 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  letter-spacing:.25em;
+  font:600 11px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  letter-spacing:.28em;
   color:#76664f;
-  transition:opacity .35s ease;
+  transition:opacity .45s ease;
 }
 .envelope{
   position:relative;
-  width:min(90vw,460px);
+  width:min(89vw,455px);
   aspect-ratio:1.45/1;
   transform-style:preserve-3d;
   cursor:pointer;
-  filter:drop-shadow(0 24px 32px rgba(49,33,12,.18));
+  filter:drop-shadow(0 22px 28px rgba(54,36,13,.16));
 }
 .back{
-  position:absolute; inset:0;
+  position:absolute;inset:0;
   z-index:1;
   border-radius:11px;
-  background:var(--paper);
-  border:1px solid rgba(133,101,50,.20);
+  border:1px solid rgba(126,95,46,.18);
+  background:
+    linear-gradient(110deg,rgba(255,255,255,.20),transparent 36%),
+    repeating-linear-gradient(3deg,rgba(116,91,56,.018) 0 1px,transparent 1px 4px),
+    var(--paper);
 }
 
+/* CARD: clipped until flap is fully open */
+.holder{
+  position:absolute;inset:0;
+  z-index:2;
+  overflow:hidden;
+  border-radius:11px;
+  pointer-events:none;
+}
+.holder.release{overflow:visible}
+.card{
+  position:absolute;
+  z-index:3;
+  width:68%;
+  left:16%;
+  top:57%;
+  aspect-ratio:.69/1;
+  overflow:hidden;
+  border-radius:7px;
+  background:#fffaf2;
+  box-shadow:0 10px 26px rgba(39,25,8,.18);
+  will-change:transform;
+}
+.card img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* pocket */
+.left,.right,.bottom{
+  position:absolute;
+  z-index:5;
+  pointer-events:none;
+}
+.left{
+  inset:0 50% 0 0;
+  background:
+    repeating-linear-gradient(4deg,rgba(110,85,52,.018) 0 1px,transparent 1px 4px),
+    linear-gradient(35deg,#e8dac5,#f7f0e5);
+  clip-path:polygon(0 0,100% 51%,0 100%);
+}
+.right{
+  inset:0 0 0 50%;
+  background:
+    repeating-linear-gradient(-4deg,rgba(110,85,52,.018) 0 1px,transparent 1px 4px),
+    linear-gradient(325deg,#e8dac5,#f7f0e5);
+  clip-path:polygon(100% 0,0 51%,100% 100%);
+}
+.bottom{
+  left:0;right:0;bottom:0;height:58%;
+  border-radius:0 0 11px 11px;
+  background:
+    repeating-linear-gradient(2deg,rgba(110,85,52,.016) 0 1px,transparent 1px 4px),
+    linear-gradient(180deg,#f1e7d7,#e4d4bd);
+  clip-path:polygon(0 100%,0 0,50% 51%,100% 0,100% 100%);
+}
+
+/* flap */
+.flap{
+  position:absolute;inset:0;
+  z-index:7;
+  transform-origin:50% 0;
+  transform:rotateX(0deg);
+  backface-visibility:hidden;
+  background:
+    repeating-linear-gradient(3deg,rgba(110,85,52,.017) 0 1px,transparent 1px 4px),
+    linear-gradient(180deg,#fbf6ed,#e6d8c3);
+  clip-path:polygon(0 0,100% 0,50% 60%);
+  will-change:transform;
+}
+
+/* less "button-like" wax */
+.seal{
+  position:absolute;
+  z-index:9;
+  left:50%;top:45%;
+  transform:translate(-50%,-50%) rotate(-2deg);
+  width:75px;height:73px;
+  border-radius:48% 52% 44% 56% / 55% 45% 55% 45%;
+  display:grid;place-items:center;
+  color:#e9c8aa;
+  font:20px Georgia,serif;
+  background:
+    radial-gradient(circle at 31% 25%,rgba(255,255,255,.17),transparent 13%),
+    radial-gradient(circle at 67% 72%,rgba(52,5,5,.22),transparent 28%),
+    linear-gradient(145deg,#a8312d,#731917 68%,#5f1111);
+  box-shadow:
+    0 8px 13px rgba(75,18,15,.25),
+    inset 3px 4px 7px rgba(255,178,142,.10),
+    inset -3px -4px 8px rgba(55,4,4,.22);
+}
+.seal:after{
+  content:"永遠";
+  width:48px;height:47px;
+  border:1px solid rgba(236,201,169,.47);
+  border-radius:49% 51% 48% 52%;
+  display:grid;place-items:center;
+  text-shadow:0 1px 1px rgba(60,10,8,.45);
+}
+
+.paper{
+  transition:opacity .55s ease,filter .55s ease;
+}
+.envelope.fade .paper{
+  opacity:0;
+  filter:blur(1.5px);
+}
+
+/* same card becomes final card */
+.card.takeover{
+  position:fixed;
+  z-index:50;
+  margin:0;
+  transform:none!important;
+  transition:
+    left 1.18s cubic-bezier(.16,.78,.18,1),
+    top 1.18s cubic-bezier(.16,.78,.18,1),
+    width 1.18s cubic-bezier(.16,.78,.18,1),
+    height 1.18s cubic-bezier(.16,.78,.18,1),
+    border-radius .8s ease,
+    box-shadow .9s ease;
+}
+.close{
+  position:fixed;
+  z-index:70;
+  top:calc(14px + env(safe-area-inset-top));
+  right:14px;
+  width:42px;height:42px;
+  border:0;border-radius:50%;
+  background:rgba(255,255,255,.82);
+  color:#51432f;
+  font-size:25px;
+  box-shadow:0 5px 18px rgba(0,0,0,.09);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .45s ease;
+}
+.close.show{opacity:1;pointer-events:auto}
+
+@media (prefers-reduced-motion:reduce){
+ *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+
+<body>
+<main class="scene" id="scene">
+  <div class="hint" id="hint">TOCCA PER APRIRE</div>
+
+  <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Apri l'invito">
+    <div class="back paper"></div>
+
+    <div class="holder" id="holder">
+      <div class="card" id="card">
+        <img src="invito.png" alt="10 anni insieme — 24 ottobre 2026, ore 19:00, IYO Kaiseki">
+      </div>
+    </div>
+
+    <div class="left paper"></div>
+    <div class="right paper"></div>
+    <div class="bottom paper"></div>
+    <div class="flap paper" id="flap"></div>
+    <div class="seal paper" id="seal"></div>
+  </div>
+
+  <button class="close" id="close" aria-label="Chiudi">×</button>
+</main>
+
+<script>
+const scene    = document.getElementById('scene');
+const envelope = document.getElementById('envelope');
+const holder   = document.getElementById('holder');
+const card     = document.getElementById('card');
+const flap     = document.getElementById('flap');
+const seal     = document.getElementById('seal');
+const hint     = document.getElementById('hint');
+const closeBtn = document.getElementById('close');
+
+let busy=false;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const anim=(el,keyframes,options)=>
+  el.animate(keyframes,{fill:'forwards',...options}).finished;
+
+async function openInvite(){
+  if(busy)return;
+  busy=true;
+  hint.style.opacity='0';
+
+  /* 1. Wax: small physical release */
+  await anim(seal,[
+    {opacity:1,transform:'translate(-50%,-50%) rotate(-2deg) scale(1)'},
+    {opacity:.95,transform:'translate(-50%,-48%) rotate(2deg) scale(1.025)',offset:.35},
+    {opacity:0,transform:'translate(-50%,-44%) rotate(7deg) scale(.82)'}
+  ],{duration:360,easing:'cubic-bezier(.2,.65,.25,1)'});
+
+  /* 2. Flap: weighted opening, tiny hesitation at the end */
+  await anim(flap,[
+    {transform:'rotateX(0deg)'},
+    {transform:'rotateX(72deg)',offset:.42},
+    {transform:'rotateX(164deg)',offset:.88},
+    {transform:'rotateX(180deg)'}
+  ],{duration:980,easing:'cubic-bezier(.24,.62,.22,1)'});
+
+  /* 3. Only now can the invitation leave the envelope */
+  holder.classList.add('release');
+
+  /* 4. Extraction: slower start, then naturally freer */
+  await anim(card,[
+    {transform:'translateY(0)'},
+    {transform:'translateY(-28%)',offset:.35},
+    {transform:'translateY(-83%)',offset:.76},
+    {transform:'translateY(-113%)'}
+  ],{duration:1320,easing:'cubic-bezier(.20,.58,.16,1)'});
+
+  /* 5. Narrative pause: card is fully out, nothing moves */
+  await wait(470);
+
+  /* 6. Envelope disappears completely before zoom */
+  envelope.classList.add('fade');
+  scene.classList.add('ending');
+  await wait(580);
+
+  /* 7. Re-parent SAME card without a visible jump */
+  const r=card.getBoundingClientRect();
+  card.getAnimations().forEach(a=>a.cancel());
+
+  document.body.appendChild(card);
+  card.classList.add('takeover');
+  Object.assign(card.style,{
+    left:r.left+'px',
+    top:r.top+'px',
+    width:r.width+'px',
+    height:r.height+'px'
+  });
+  card.getBoundingClientRect();
+
+  /* 8. Cinematic final move, aspect ratio preserved */
+  const ratio=r.width/r.height;
+  const maxH=window.innerHeight*.92;
+  const maxW=window.innerWidth*.94;
+  let h=maxH,w=h*ratio;
+  if(w>maxW){w=maxW;h=w/ratio}
+
+  const x=(window.innerWidth-w)/2;
+  const y=(window.innerHeight-h)/2;
+
+  requestAnimationFrame(()=>{
+    Object.assign(card.style,{
+      left:x+'px',
+      top:y+'px',
+      width:w+'px',
+      height:h+'px',
+      borderRadius:'8px',
+      boxShadow:'0 30px 75px rgba(45,29,9,.25)'
+    });
+  });
+
+  await wait(1230);
+  closeBtn.classList.add('show');
+}
+
+function reset(){ location.reload(); }
+
+envelope.addEventListener('click',openInvite);
+envelope.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){
+    e.preventDefault();openInvite();
+  }
+});
+closeBtn.addEventListener('click',reset);
+</script>
+</body>
+</html>
 /* The card is physically clipped inside the envelope at rest. */
 .card-holder{
   position:absolute;
